@@ -1,5 +1,5 @@
 import pytest
-from infra.config_provider import ConfigProvider
+from infra.handlers import ConfigHandler
 from infra.streaming_validator import StreamingValidator
 from infra.mobile_session import MobileSession
 
@@ -16,7 +16,7 @@ def pytest_addoption(parser):
 def app_config(request):
     """Load configuration data based on command line option."""
     env_path = request.config.getoption("--env")
-    return ConfigProvider.load_config(env_path)
+    return ConfigHandler.load_config(env_path)
     
 @pytest.fixture(scope="session")
 def streaming_validator(app_config):

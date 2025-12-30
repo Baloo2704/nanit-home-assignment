@@ -2,13 +2,13 @@ import json
 import os
 from pathlib import Path
 
-class ConfigProvider:
+class ConfigHandler:
     @staticmethod
     def load_config(env_path: str) -> dict:
         """
         Loads the configuration JSON and applies environment variable overrides.
         """
-        project_root = Path(__file__).parent.parent
+        project_root = Path(__file__).resolve().parents[2]
         config_full_path = project_root / env_path
 
         if not config_full_path.exists():

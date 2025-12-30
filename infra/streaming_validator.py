@@ -1,66 +1,62 @@
 import requests
-from pydantic import ValidationError
+from infra.base_session import BaseSession
 from infra.schemas import PerformanceMetrics, HealthCheck
 
-
-class StreamingValidator:
+class StreamingValidator(BaseSession):
+    """
+    Validates the Streaming Server API.
+    Inherits retry logic from BaseSession to handle network flakiness.
+    """
     def __init__(self, base_url):
+        super().__init__(name="API_VALIDATOR")
         self.base_url = base_url
-        
+
+    def _get_request(self, endpoint):
+        """
+        Internal helper.
+        This function is passed to self.retry_operation, so it doesn't need
+        its own error handling logic here.
+        """
+        response = requests.get(f"{self.base_url}{endpoint}")
+        response.raise_for_status()
+        return response.json()
+
     def get_metrics(self):
-        """Fetches the /metrics endpoint and returns the json response."""
-        response = requests.get(f"{self.base_url}/metrics")
-        response.raise_for_status()
-        return response.json()
-    
+        # Executes _get_request with automatic retries (default 3 attempts)
+        return self.retry_operation(self._get_request, endpoint="/metrics")
+
     def get_health_metrics(self):
-        """Fetches raw JSON from /health."""
-        response = requests.get(f"{self.base_url}/health")
-        response.raise_for_status()
-        return response.json()
-    
+        return self.retry_operation(self._get_request, endpoint="/health")
+
     def set_network_condition(self, condition):
-        """
-        Sets network conditoin.
-        Valid values: 'normal', 'poor', 'terrible'
-        """
         url = f"{self.base_url}/control/network/{condition}"
-        response = requests.put(url)
-        response.raise_for_status()
+        self.log_info(f"Setting network condition to: {condition}")
+        
+        # We can also wrap PUT requests in retry logic if desired
+        def _put():
+            resp = requests.put(url)
+            resp.raise_for_status()
+            return resp
+            
+        self.retry_operation(_put)
 
     def validate_streaming_performance(self):
-        """Validates structure using the PerformanceMetrics Pydantic model."""
-        metrics = self.get_metrics()
+        """
+        Validates structure using PerformanceMetrics schema.
+        """
+        data = self.get_metrics()
         
-        if 'performance' not in metrics:
+        if 'performance' not in data:
+            self.log_error("'performance' key missing in metrics response")
             raise ValueError("Validation Failed: 'performance' key missing")
             
-        try:
-            # MAGIC HAPPENS HERE: 
-            # 1. Checks all keys exist
-            # 2. Checks types (e.g., latency is a number, not a string)
-            # 3. Strips out unknown extra fields (optional)
-            validated_metrics = PerformanceMetrics(**metrics['performance'])
-            
-            # Return the validated object (or dict if you prefer)
-            return validated_metrics.model_dump()
-            
-        except ValidationError as e:
-            # Returns a very detailed error about exactly which key failed
-            raise ValueError(f"Schema Validation Failed: {e}")
+        validated_metrics = PerformanceMetrics(**data['performance'])
+        return validated_metrics.model_dump()
 
     def validate_health_check(self):
         """
-        Stage 3 Validation:
-        Strictly validates the schema of the /health response against the HealthCheck model.
-        Does NOT enforce specific status values (logic moved to test).
-        
-        Returns:
-            HealthCheck: The validated Pydantic model object.
+        Validates structure using HealthCheck schema.
         """
-        # 1. Fetch
         data = self.get_health_metrics()
-        
-        # 2. Schema Validation (Pydantic)
-        # This guarantees 'status', 'viewers', 'timestamp' etc. exist and have correct types.
+        # Returns the validated Pydantic model
         return HealthCheck(**data)
