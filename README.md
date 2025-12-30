@@ -103,7 +103,3 @@ export PASSWORD="secure_password"
 pytest
 
 ```
-
-```
-
-```
