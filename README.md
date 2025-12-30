@@ -72,11 +72,38 @@ This framework uses `pytest` for test execution. The default configuration is lo
 | **Run API Tests** | `pytest -m api` | Runs only tests marked as `api` (Stage 1). |
 | **Run Mobile Tests** | `pytest -m mobile` | Runs only tests marked as `mobile` (Stage 2). |
 | **Run Integration Tests** | `pytest -m integration` | Runs only tests marked as `integration` (Stage 3). |
-| **Custom Configuration** | `pytest --env=config/custom_config.json` | Runs tests using a different configuration file (if created). |
+| **Custom Configuration** | `pytest --env=config/custom_config.json` | Runs tests using a different configuration file. |
 
 ## 📝 Configuration
 
-The framework supports multiple environments via JSON configuration files located in the `config/` directory.
+The framework uses a priority-based configuration system. It loads settings in the following order (highest priority first):
 
-* **`config/config.json`**: The default configuration used for test execution.
-* **`--env` flag**: Use this to inject a specific configuration file at runtime.
+1. **Environment Variables (CI/CD)**
+2. **Command Line Arguments (`--env`)**
+3. **Default Configuration (`config/config.json`)**
+
+### CI/CD Overrides
+
+For Continuous Integration (CI) environments, you can override core settings using system environment variables. This allows for secure injection of credentials and dynamic environment targeting without modifying files.
+
+The configuration handler looks for the following variables:
+
+| Environment Variable | Config Key Override | Description |
+| --- | --- | --- |
+| `BASE_ADDRESS` | `base_address` | Target URL for the API/Server under test. |
+| `USERNAME` | `username` | User credentials for authentication. |
+| `PASSWORD` | `password` | Password for authentication. |
+
+**Example Usage (Linux/Mac):**
+
+```bash
+export BASE_ADDRESS="http://staging-server:8080"
+export USERNAME="ci_user"
+export PASSWORD="secure_password"
+pytest
+
+```
+
+```
+
+```
