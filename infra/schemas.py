@@ -9,3 +9,11 @@ class PerformanceMetrics(BaseModel):
     
     # Example of scalability: You can make fields optional if needed
     # buffer_health: Optional[float] = None
+
+class HealthCheck(BaseModel):
+    status: str = Field(..., description="Current server status (e.g., 'streaming')")
+    bitrate: str
+    viewers: int
+    network_condition: str
+    uptime_seconds: int
+    timestamp: float

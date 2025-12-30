@@ -1,6 +1,6 @@
 import requests
 from pydantic import ValidationError
-from infra.schemas import PerformanceMetrics
+from infra.schemas import PerformanceMetrics, HealthCheck
 
 
 class StreamingValidator:
@@ -10,6 +10,12 @@ class StreamingValidator:
     def get_metrics(self):
         """Fetches the /metrics endpoint and returns the json response."""
         response = requests.get(f"{self.base_url}/metrics")
+        response.raise_for_status()
+        return response.json()
+    
+    def get_health_metrics(self):
+        """Fetches raw JSON from /health."""
+        response = requests.get(f"{self.base_url}/health")
         response.raise_for_status()
         return response.json()
     
@@ -43,3 +49,18 @@ class StreamingValidator:
             # Returns a very detailed error about exactly which key failed
             raise ValueError(f"Schema Validation Failed: {e}")
 
+    def validate_health_check(self):
+        """
+        Stage 3 Validation:
+        Strictly validates the schema of the /health response against the HealthCheck model.
+        Does NOT enforce specific status values (logic moved to test).
+        
+        Returns:
+            HealthCheck: The validated Pydantic model object.
+        """
+        # 1. Fetch
+        data = self.get_health_metrics()
+        
+        # 2. Schema Validation (Pydantic)
+        # This guarantees 'status', 'viewers', 'timestamp' etc. exist and have correct types.
+        return HealthCheck(**data)

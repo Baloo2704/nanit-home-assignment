@@ -8,7 +8,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--env",
         action="store",
-        default="config.json",
+        default="config/config.json",
         help="Path to the configuration file"
     )
     
