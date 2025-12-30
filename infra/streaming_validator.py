@@ -4,9 +4,9 @@ from infra.schemas import PerformanceMetrics
 
 
 class StreamingValidator:
-    def __init__(self, base_url="http://localhost:8082"):
+    def __init__(self, base_url):
         self.base_url = base_url
-
+        
     def get_metrics(self):
         """Fetches the /metrics endpoint and returns the json response."""
         response = requests.get(f"{self.base_url}/metrics")

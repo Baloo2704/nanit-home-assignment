@@ -1,38 +1,37 @@
-# Project Name
+# Nanit Home Assignment
 
-## Installation
+## Overview
+This repository contains the automation infrastructure for:
+1.  **Stage 1:** API Validation of the Mock Streaming Server.
+2.  **Stage 2:** Mock Mobile Session implementation.
 
-```bash
-pip install -r requirements.txt
-```
+## Setup
+1.  **Install Dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-## Running the Server
-
-```bash
-python ./mock_services/mock_stream_server.py
-```
-
-The server will start on `http://localhost:8082`
+2.  **Start the Mock Server:**
+    Open a separate terminal and run:
+    ```bash
+    python mock_services/mock_streaming_server.py
+    ```
+    *Server will listen on http://localhost:8082*
 
 ## Running Tests
 
+### Default Execution
+Run all tests using the default configuration (`config.json`):
 ```bash
 pytest
 ```
 
-For verbose output:
+Run tests with specific marker
 ```bash
-pytest -v
+pytest -m api
 ```
 
-## Project Structure
-
-- `.\mock_services\mock_stream_server.py` - Mock stream server
-- `.\infra\` - Project infrastracture (streaming_validator, schemas, mobile_session)
-- `requirements.txt` - Python dependencies
-- `tests/` - Test suite
-
-## Configuration
-
-- `infra\config\config.json` - Project configuration
-- `pytest.ini` - Pytest configuration
+Run tests with environment variable
+```bash
+pytest --env=dev.json
+```

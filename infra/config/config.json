@@ -1,0 +1,11 @@
+{
+    "stream_server": {
+        "base_url": "http://localhost:8082",
+        "timeout": 10
+    },
+    "mobile": {
+        "username": "demo_app@nanit.com",
+        "password": "12341234",
+        "platform": "ios"
+    }
+}
