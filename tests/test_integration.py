@@ -2,7 +2,7 @@ import pytest
 from infra.pages import WelcomePage
 
 @pytest.mark.integration
-def test_mobile_and_backend_sync(mobile_session, streaming_validator):
+def test_mobile_and_backend_sync(mobile_session, streaming_validator, test_logger):
     """
     Stage 3 Requirement:
     1. Mobile: Login → Navigate to stream → Verify visible stream
@@ -25,7 +25,7 @@ def test_mobile_and_backend_sync(mobile_session, streaming_validator):
     health_model = streaming_validator.validate_health_check()
     
     # --- Step 3: Validation (Agreement) ---
-    print(f"\n[Sync Check] Mobile Visible: {mobile_is_streaming} | Backend Status: {health_model.status}")
+    test_logger.info(f"\n[Sync Check] Mobile Visible: {mobile_is_streaming} | Backend Status: {health_model.status}")
 
     # Assertion 1: Mobile is working
     assert mobile_is_streaming is True, "Mobile App does not show the video stream"
