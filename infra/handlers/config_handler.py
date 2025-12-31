@@ -26,5 +26,8 @@ class ConfigHandler:
         
         if os.getenv("NANIT_PASSWORD"):
             config["mobile"]["password"] = os.getenv("NANIT_PASSWORD")
+
+        if os.getenv("NANIT_PLATFORM"):
+            config["mobile"]["platform"] = os.getenv("NANIT_PLATFORM")
             
         return config

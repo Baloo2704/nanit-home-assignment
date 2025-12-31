@@ -19,11 +19,11 @@ class RetryHandler:
                 return func(**kwargs)
             except (RequestException, ValueError, KeyError) as e:
                 last_exception = e
-                self.logger.log_info(f"Operation failed (Attempt {attempt+1}/{retries}). Retrying in {delay}s...")
+                self.logger.info(f"Operation failed (Attempt {attempt+1}/{retries}). Retrying in {delay}s...")
                 time.sleep(delay)
-        
-        self.logger.log_error(f"Operation failed permanently after {retries} attempts.")
-        
+
+        self.logger.error(f"Operation failed permanently after {retries} attempts.")
+
         if last_exception:
             raise last_exception
         

@@ -16,7 +16,7 @@ This repository contains the automation logic for three distinct stages:
 
 ## 🛠️ Tech Stack
 
-* **Language:** Python 3.8+
+* **Language:** Python 3.10+
 * **Validation:** Pydantic
 * **Testing Framework:** Pytest
 * **HTTP Requests:** Requests Library
@@ -42,7 +42,7 @@ This repository contains the automation logic for three distinct stages:
 
 ### 1. Prerequisites
 
-Ensure you have **Python 3.8** or higher installed. It is recommended to use a virtual environment.
+Ensure you have **Python 3.10** or higher installed. It is recommended to use a virtual environment.
 
 ### 2. Install Dependencies
 
@@ -79,7 +79,7 @@ This framework uses `pytest` for test execution. The default configuration is lo
 The framework uses a priority-based configuration system. It loads settings in the following order (highest priority first):
 
 1. **Environment Variables (CI/CD)**
-2. **Command Line Arguments (`--env`)**
+2. **Command Line Arguments (`--env`, `--platform`)**
 3. **Default Configuration (`config/config.json`)**
 
 ### CI/CD Overrides

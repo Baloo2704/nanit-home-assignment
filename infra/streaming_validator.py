@@ -8,7 +8,7 @@ class StreamingValidator(BaseSession):
     Inherits retry logic from BaseSession to handle network flakiness.
     """
     def __init__(self, base_url):
-        super().__init__(name="API_VALIDATOR")
+        super().__init__(name="API")
         self.base_url = base_url
 
     def _get_request(self, endpoint):
@@ -30,7 +30,7 @@ class StreamingValidator(BaseSession):
 
     def set_network_condition(self, condition):
         url = f"{self.base_url}/control/network/{condition}"
-        self.log_info(f"Setting network condition to: {condition}")
+        self._logger.info(f"Setting network condition to: {condition}")
         
         # We can also wrap PUT requests in retry logic if desired
         def _put():
@@ -47,7 +47,7 @@ class StreamingValidator(BaseSession):
         data = self.get_metrics()
         
         if 'performance' not in data:
-            self.log_error("'performance' key missing in metrics response")
+            self._logger.error("'performance' key missing in metrics response")
             raise ValueError("Validation Failed: 'performance' key missing")
             
         validated_metrics = PerformanceMetrics(**data['performance'])
