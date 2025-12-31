@@ -148,4 +148,5 @@ segment*.ts
 
 # Docker
 *.log
+reports/
 
