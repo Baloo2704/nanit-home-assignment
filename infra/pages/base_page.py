@@ -3,12 +3,8 @@ class BasePage:
         self.session = session
         self.platform = session.platform
 
-    def _get_locator(self, element_map):
-        """Helper to resolve the ID for the current platform."""
-        return element_map.get(self.platform)
-
     def _find(self, element_map):
-        element_id = self._get_locator(element_map)
+        element_id = element_map.get(self.platform)
         return self.session.find_element(element_id)
 
     def _click(self, element_map):
