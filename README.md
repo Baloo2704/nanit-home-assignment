@@ -73,6 +73,7 @@ This framework uses `pytest` for test execution. The default configuration is lo
 | **Run Mobile Tests** | `pytest -m mobile` | Runs only tests marked as `mobile` (Stage 2). |
 | **Run Integration Tests** | `pytest -m integration` | Runs only tests marked as `integration` (Stage 3). |
 | **Custom Configuration** | `pytest --env=config/custom_config.json` | Runs tests using a different configuration file. |
+| **Custom Mobile Platform** | `pytest --platform=android` | Runs tests only on chosen mobile platform. |
 
 ## 📝 Configuration
 
@@ -90,16 +91,18 @@ The configuration handler looks for the following variables:
 
 | Environment Variable | Config Key Override | Description |
 | --- | --- | --- |
-| `BASE_ADDRESS` | `base_address` | Target URL for the API/Server under test. |
-| `USERNAME` | `username` | User credentials for authentication. |
-| `PASSWORD` | `password` | Password for authentication. |
+| `NANIT_BASE_URL` | `["stream_server"]["base_url"]` | Target URL for the API/Server under test. |
+| `NANIT_USERNAME` | `["mobile"]["username"]` | User credentials for authentication. |
+| `NANIT_PASSWORD` | `["mobile"]["password"]` | Password for authentication. |
+| `NANIT_PLATFORM` | `["mobile"]["platform"]` | Mobile platform to run tests. |
 
 **Example Usage (Linux/Mac):**
 
 ```bash
-export BASE_ADDRESS="http://staging-server:8080"
-export USERNAME="ci_user"
-export PASSWORD="secure_password"
+export NANIT_BASE_URL="http://staging-server:8082"
+export NANIT_USERNAME="ci_user"
+export NANIT_PASSWORD="secure_password"
+export NANIT_PLATFORM="ios" or "android"
 pytest
 
 ```
