@@ -106,3 +106,8 @@ export NANIT_PLATFORM="ios" or "android"
 pytest
 
 ```
+
+### Test Logs & Reports
+
+- Test logs located in poroject rood dir inside logs/
+- Test HTML report located in poroject rood dir inside reports/
