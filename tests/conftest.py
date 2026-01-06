@@ -1,6 +1,9 @@
 import pytest
 import logging
-from infra.handlers import ConfigHandler, LoggingHandler
+import subprocess
+import requests
+import sys
+from infra.handlers import ConfigHandler, LoggingHandler, RetryHandler
 from infra.streaming_validator import StreamingValidator
 from infra.mobile_session import MobileSession
 
@@ -79,3 +82,34 @@ def test_logger(request):
     # This leaves Pytest's console handler intact for the next test
     logger.removeHandler(file_handler)
     file_handler.close()
+
+# @pytest.fixture(scope="session", autouse=True)
+# def mock_server(app_config):
+#     """
+#     Sets up a mock server for testing purposes.
+#     This is a placeholder; implementation depends on the specific mock server used.
+#     """
+#     # Start mock server process
+#     server_process = subprocess.Popen(
+#         [sys.executable, "mock_services/mock_stream_server.py"], 
+#         stdout=subprocess.PIPE, 
+#         stderr=subprocess.PIPE
+#         )
+    
+#     # Initialize retry handler
+#     retrier_handler = RetryHandler(logging.getLogger("MockServer"))
+#     health_url = app_config['stream_server']['base_url'] + "/health"
+
+#     # Execute health check with retries
+#     try:
+#         retrier_handler.retry(requests.get, delay=2, url=health_url)
+  
+#     except Exception as e:
+#         # Critical - if retries exhausted, kill the process before failing
+#         server_process.terminate()
+#         raise RuntimeError(f"Mock server failed to start: {e}") from e
+    
+#     yield  # Tests runs here
+   
+#     # Teardown: Stop mock server
+#     server_process.terminate()

@@ -17,8 +17,10 @@ class StreamingValidator(BaseSession):
         This function is passed to self.retry_operation, so it doesn't need
         its own error handling logic here.
         """
-        response = requests.get(f"{self.base_url}{endpoint}")
+        self._logger.info(f"Making GET request to: {self.base_url}{endpoint}")
+        response = requests.get(f"{self.base_url}{endpoint}", timeout=5)
         response.raise_for_status()
+        self._logger.info(f"GET {endpoint} response: {response.text}")
         return response.json()
 
     def get_metrics(self):
@@ -34,8 +36,10 @@ class StreamingValidator(BaseSession):
         
         # We can also wrap PUT requests in retry logic if desired
         def _put():
+            self._logger.info(f"Making PUT request to: {url}")
             resp = requests.put(url)
             resp.raise_for_status()
+            self._logger.info(f"Network condition set response: {resp.json()}")
             return resp
             
         self.retry_operation(_put)
@@ -44,6 +48,7 @@ class StreamingValidator(BaseSession):
         """
         Validates structure using PerformanceMetrics schema.
         """
+        self._logger.info("Validating streaming performance metrics")
         data = self.get_metrics()
         
         if 'performance' not in data:
@@ -51,12 +56,15 @@ class StreamingValidator(BaseSession):
             raise ValueError("Validation Failed: 'performance' key missing")
             
         validated_metrics = PerformanceMetrics(**data['performance'])
+        self._logger.info(f"Validated performance metrics: {validated_metrics.model_dump()}")
         return validated_metrics.model_dump()
 
     def validate_health_check(self):
         """
         Validates structure using HealthCheck schema.
         """
+        self._logger.info("Validating health check metrics")
         data = self.get_health_metrics()
         # Returns the validated Pydantic model
+        self._logger.info(f"Validated health check metrics: {data}")
         return HealthCheck(**data)
